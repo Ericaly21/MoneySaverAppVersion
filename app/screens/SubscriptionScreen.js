@@ -18,6 +18,7 @@ import {
       const [cost, setCost] = useState('');
       const [paymentDate, setPaymentDate] = useState('');
       const [searchQuery, setSearchQuery] = useState('');
+      const [selectedSubscription, setSelectedSubscription] = useState(null);
   
       useEffect(() => {
           // Sort subscriptions
@@ -28,26 +29,59 @@ import {
       }, [subscriptions]);
   
 
-    const handleDeleteSubscription = (id) => {
-        // Confirm before deleting
+      const handleEditOrDeleteSubscription = (id) => {
+        // Prompt user for edit or delete
+        const selected = subscriptions.find(subscription => subscription.id === id);
+        
         Alert.alert(
-            "Delete Subscription",
-            "Are you sure you want to delete this subscription?",
+          "Edit or Delete Subscription",
+          "What would you like to do with this subscription?",
             [
-                {
-                    text: "Cancel",
-                    style: "cancel"
-                },
-                { 
-                    text: "OK", onPress: () => {
-                        setSubscriptions(currentSubscriptions => 
-                            currentSubscriptions.filter(subscription => subscription.id !== id)
-                        );
-                    }
+              {
+                text: "Cancel",
+                style: "cancel"
+              },
+              {
+                text: "Edit",
+                onPress: () => {
+                  setSelectedSubscription(selected);
+                  setSubscriptionName(selected.name);
+                  setCost(selected.cost.toString());
+                  setPaymentDate(selected.paymentDate);
+                  setSelectedSubscription(selected);
+                  setModalVisible(true);
+                  console.log("Edit subscription with id:", id);
                 }
+              },
+              {
+                text: "Delete",
+                style: "destructive",
+                onPress: () => {
+                  // Confirm before deleting
+                  Alert.alert(
+                    "Delete Subscription",
+                    "Are you sure you want to delete this subscription?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel"
+                      },
+                      {
+                        text: "OK",
+                        onPress: () => {
+                          setSubscriptions(currentSubscriptions =>
+                            currentSubscriptions.filter(subscription => subscription.id !== id)
+                          );
+                        }
+                      }
+                    ]
+                  );
+                }
+              }
             ]
         );
-    };
+      };
+
       const handleAddSubscription = () => {
           let logo = null;
           if (subscriptionName.toLowerCase() === 'hbo' || subscriptionName.toLowerCase() === 'max'
@@ -67,22 +101,47 @@ import {
           } else if (subscriptionName.toLowerCase() === 'hulu' ) {
             logo = huluLogo
           }
-  
-          const newSubscription = {
+          
+          if (selectedSubscription) {
+            // If there's a selected subscription, it means we are editing
+            const updatedSubscriptions = subscriptions.map(subscription => {
+              if (subscription.id === selectedSubscription.id) {
+                return {
+                  ...subscription,
+                  name: subscriptionName,
+                  cost: parseFloat(cost),
+                  paymentDate,
+                };
+              }
+              return subscription;
+            });
+      
+            setSubscriptions(updatedSubscriptions);
+            setSelectedSubscription(null); // Reset selected subscription
+          } else {
+            // If no selected subscription, it means we are adding
+            const newSubscription = {
               id: subscriptions.length.toString(),
               name: subscriptionName,
               cost,
               paymentDate,
-              logo, // This will either be null or the imported image
-          };
-          setSubscriptions([...subscriptions, newSubscription]);
+              logo,
+            };
+      
+            setSubscriptions([...subscriptions, newSubscription]);
+          }
+      
           setSubscriptionName('');
           setCost('');
           setPaymentDate('');
           setModalVisible(false);
-      };
+        };
+      
       const closeModal = () => {
-          setModalVisible(false);
+        setSubscriptionName('');
+        setCost('');
+        setPaymentDate('');
+        setModalVisible(false);
       };
 
       const filteredSubscriptions = subscriptions.filter(subscription =>
@@ -119,7 +178,7 @@ import {
                   <Text style={styles.subscriptionNameText}>{item.name}</Text>
                   <Text style={styles.costText}>${item.cost}</Text>
                 </View>
-                <TouchableOpacity onPress={() => handleDeleteSubscription(item.id)} style={styles.optionsButton}>
+                <TouchableOpacity onPress={() => handleEditOrDeleteSubscription(item.id)} style={styles.optionsButton}>
                   <Text style={styles.optionsText}>...</Text>
                 </TouchableOpacity>
               </View>
@@ -159,7 +218,7 @@ import {
                 style={styles.input}
               />
               <Button
-                title="Add Subscription"
+                title="Save Subscription"
                 onPress={handleAddSubscription}
               />
             </View>

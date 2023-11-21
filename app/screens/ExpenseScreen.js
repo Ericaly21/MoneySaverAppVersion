@@ -15,6 +15,7 @@ const ExpenseScreen = () => {
   const [paymentDate, setPaymentDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedImage, setSelectedImage] = useState(coinLogo); // Placeholder for image selection logic
+  const [selectedExpense, setSelectedExpense] = useState(null); // New state for selected expense
 
   useEffect(() => {
     const sortedExpenses = expenses.sort((a, b) => 
@@ -23,43 +24,107 @@ const ExpenseScreen = () => {
     setExpenses(sortedExpenses);
   }, [expenses]);
 
-  const handleDeleteExpense = (id) => {
+  const handleEditOrDeleteExpense = (id) => {
+    const selected = expenses.find(expense => expense.id === id);
     Alert.alert(
-      "Delete Expense",
-      "Are you sure you want to delete this expense?",
+      "Edit or Delete Expense",
+      "Do you want to edit or delete this expense?",
       [
         {
           text: "Cancel",
           style: "cancel"
         },
-        { 
-          text: "OK", onPress: () => {
-              setExpenses(currentExpenses => 
-                  currentExpenses.filter(expense => expense.id !== id)
-              );
+        {
+          text: "Edit",
+          onPress: () => {
+            // Implement your edit logic here
+            // Set temporary values in the form for editing
+            setExpenseName(selected.name);
+            setAmount(selected.amount.toString());
+            setPaymentDate(selected.paymentDate);
+            setSelectedImage(selected.image);
+
+            setSelectedExpense(selected);
+            setModalVisible(true);
+            console.log("Edit expense with id:", id);
+          }
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert(
+              "Delete Expense",
+              "Are you sure you want to delete this expense?",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel"
+                },
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setExpenses((currentExpenses) =>
+                      currentExpenses.filter((expense) => expense.id !== id)
+                    );
+                  }
+                }
+              ]
+            );
           }
         }
       ]
     );
   };
 
+
   const handleAddExpense = () => {
-    const newExpense = {
-      id: expenses.length.toString(),
-      name: expenseName,
-      amount,
-      paymentDate,
-      image: selectedImage,
-    };
-    setExpenses([...expenses, newExpense]);
+    if (selectedExpense) {
+      // If there's a selected expense, it means we are editing
+      const updatedExpenses = expenses.map(expense => {
+        if (expense.id === selectedExpense.id) {
+          return {
+            ...expense,
+            name: expenseName,
+            amount: parseFloat(amount),
+            paymentDate,
+            image: selectedImage,
+          };
+        }
+        return expense;
+      });
+
+      setExpenses(updatedExpenses);
+      setSelectedExpense(null); // Reset selected expense
+    } else {
+      // If no selected expense, it means we are adding
+      const newExpense = {
+        id: expenses.length.toString(),
+        name: expenseName,
+        amount,
+        paymentDate,
+        image: selectedImage,
+      };
+
+      setExpenses([...expenses, newExpense]);
+    }
+
+    // Reset form fields
     setExpenseName('');
     setAmount('');
     setPaymentDate('');
-    setSelectedImage(null);
+    setSelectedImage(coinLogo);
     setModalVisible(false);
   };
 
   const closeModal = () => {
+    // Reset form fields and selected expense when the modal is closed
+    setExpenseName('');
+    setAmount('');
+    setPaymentDate('');
+    setSelectedImage(coinLogo);
+    setSelectedExpense(null);
+
     setModalVisible(false);
   };
 
@@ -97,7 +162,7 @@ const ExpenseScreen = () => {
               <Text style={styles.expenseNameText}>{item.name}</Text>
               <Text style={styles.amountText}>${item.amount}</Text>
             </View>
-            <TouchableOpacity onPress={() => handleDeleteExpense(item.id)} style={styles.optionsButton}>
+            <TouchableOpacity onPress={() => handleEditOrDeleteExpense(item.id)} style={styles.optionsButton}>
               <Text style={styles.optionsText}>...</Text>
             </TouchableOpacity>
           </View>
@@ -138,7 +203,7 @@ const ExpenseScreen = () => {
           />
           {/* Add image selection logic here */}
           <Button
-            title="Add Expense"
+            title="Save Expense"
             onPress={handleAddExpense}
           />
         </View>
