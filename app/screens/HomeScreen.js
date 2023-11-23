@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
 const HomeScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState('Susan'); // Default name set to Susan
   const [items, setItems] = useState([
     { id: '1', title: 'Rent Due in 5 Days' },
     { id: '2', title: 'Hulu Subscription Due Tomorrow' },
@@ -22,10 +22,28 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  const handleEditName = () => {
+    // Show a prompt or navigate to another screen for editing the name
+    Alert.prompt(
+      'Edit Name',
+      'Enter your new name:',
+      [{ text: 'Cancel', style: 'cancel' },
+       { text: 'OK', onPress: (newName) => setName(newName) }],
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header2}>Notifications</Text>
-      <Text style={styles.welcome}>Welcome {name}!</Text>
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.welcome}>Welcome {name}!</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={handleEditName}
+        >
+          <Text style={styles.editButtonText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={items} 
         renderItem={({ item }) => (
@@ -40,12 +58,6 @@ const HomeScreen = ({ navigation }) => {
           </View>
         )}
         keyExtractor={(item) => item.id.toString()}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your name here"
-        value={name}
-        onChangeText={setName}
       />
     </View>
   );
@@ -100,5 +112,22 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     paddingHorizontal: 20,
     backgroundColor: 'white',
+  },
+  welcomeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  welcome: {
+    fontSize: 18,
+    marginTop: 10,
+    fontWeight: '300',
+  },
+  editButton: {
+    marginLeft: 10,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#a9a9a9', // Dark grey color
+    alignSelf: 'flex-end', // Align to the bottom of the container
+    marginBottom: -5, // Adjust the position to align it with the text
   },
 });
