@@ -10,6 +10,7 @@ import {
   import disneyPlusLogo from '../assets/icons/disney.png';
   import netflixLogo from '../assets/icons/netflix.png';
   import huluLogo from '../assets/icons/hulu.png';
+  import appleLogo from '../assets/icons/apple.png';
 
   const SubscriptionScreen = () => {
       const [modalVisible, setModalVisible] = useState(false);
@@ -83,59 +84,58 @@ import {
       };
 
       const handleAddSubscription = () => {
-          let logo = null;
-          
-          if (selectedSubscription) {
-            // If there's a selected subscription, it means we are editing
-            const updatedSubscriptions = subscriptions.map(subscription => {
-              if (subscription.id === selectedSubscription.id) {
-                return {
-                  ...subscription,
-                  name: subscriptionName,
-                  cost: parseFloat(cost),
-                  paymentDate,
-                };
-              }
-              return subscription;
-            });
+        let logo = null;
+        if (subscriptionName.toLowerCase().includes('hbo') || subscriptionName.toLowerCase().includes('max')) {
+            logo = hboLogo;
+        } else if (subscriptionName.toLowerCase().includes('prime') || subscriptionName.toLowerCase().includes('amazon')) {
+            logo = primeVideoLogo;
+        } else if (subscriptionName.toLowerCase().includes('disney') || subscriptionName.toLowerCase().includes('disney plus')
+        || subscriptionName.toLowerCase().includes('disney+')) {
+            logo = disneyPlusLogo;
+        } else if (subscriptionName.toLowerCase() === 'netflix') {
+          logo = netflixLogo;
+        } else if (subscriptionName.toLowerCase() === 'hulu') {
+          logo = huluLogo;
+        }else if (subscriptionName.toLowerCase() === 'apple' || subscriptionName.toLowerCase() === 'apple tv'){
+          logo = appleLogo;
+        }
       
-            setSubscriptions(updatedSubscriptions);
-            setSelectedSubscription(null); // Reset selected subscription
-          } else {
-            // If no selected subscription, it means we are adding
-            const newSubscription = {
-              id: subscriptions.length.toString(),
-              name: subscriptionName,
-              cost,
-              paymentDate,
-              logo,
-            };
-            setSubscriptions([...subscriptions, newSubscription]);
-          }
-
-          if (subscriptionName.toLowerCase() === 'hbo' || subscriptionName.toLowerCase() === 'max'
-          || subscriptionName.toLowerCase() === 'hbo max') {
-              logo = hboLogo; // Direct use of the imported image module
-          } else if  (subscriptionName.toLowerCase() === 'prime video' || subscriptionName.toLowerCase() === 'amazon prime' 
-          || subscriptionName.toLowerCase() === 'amazon prime video'|| subscriptionName.toLowerCase() === 'amazon'
-          || subscriptionName.toLowerCase() === 'prime') {
-              logo = primeVideoLogo; // Direct use of the imported image module
-          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' 
-          ||subscriptionName.toLowerCase() === 'disney+') {
-              logo = disneyPlusLogo
-          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' ) {
-              logo = disneyPlusLogo
-          } else if (subscriptionName.toLowerCase() === 'netflix' ) {
-            logo = netflixLogo
-          } else if (subscriptionName.toLowerCase() === 'hulu' ) {
-            logo = huluLogo
-          }
-          
-          setSubscriptionName('');
-          setCost('');
-          setPaymentDate('');
-          setModalVisible(false);
-        };
+        if (selectedSubscription) {
+          // Editing an existing subscription
+          const updatedSubscriptions = subscriptions.map(subscription => {
+            if (subscription.id === selectedSubscription.id) {
+              return {
+                ...subscription,
+                name: subscriptionName,
+                cost: parseFloat(cost),
+                paymentDate,
+                logo // Assign the determined logo here
+              };
+            }
+            return subscription;
+          });
+      
+          setSubscriptions(updatedSubscriptions);
+          setSelectedSubscription(null);
+        } else {
+          // Adding a new subscription
+          const newSubscription = {
+            id: subscriptions.length.toString(),
+            name: subscriptionName,
+            cost,
+            paymentDate,
+            logo // Assign the determined logo here
+          };
+          setSubscriptions([...subscriptions, newSubscription]);
+        }
+      
+        // Resetting form fields
+        setSubscriptionName('');
+        setCost('');
+        setPaymentDate('');
+        setModalVisible(false);
+      };
+      
       
       const closeModal = () => {
         setSubscriptionName('');
