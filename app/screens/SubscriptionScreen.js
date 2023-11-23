@@ -11,6 +11,7 @@ import {
   import netflixLogo from '../assets/icons/netflix.png';
   import huluLogo from '../assets/icons/hulu.png';
   import appleLogo from '../assets/icons/apple.png';
+  import peacockLogo from '../assets/icons/peacock.png';
 
   const SubscriptionScreen = () => {
       const [modalVisible, setModalVisible] = useState(false);
@@ -98,6 +99,8 @@ import {
           logo = huluLogo;
         }else if (subscriptionName.toLowerCase() === 'apple' || subscriptionName.toLowerCase() === 'apple tv'){
           logo = appleLogo;
+        } else if (subscriptionName.toLowerCase() === 'peacock') {
+          logo = peacockLogo;
         }
       
         if (selectedSubscription) {
