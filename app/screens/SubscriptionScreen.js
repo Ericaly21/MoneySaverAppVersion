@@ -84,23 +84,6 @@ import {
 
       const handleAddSubscription = () => {
           let logo = null;
-          if (subscriptionName.toLowerCase() === 'hbo' || subscriptionName.toLowerCase() === 'max'
-          || subscriptionName.toLowerCase() === 'hbo max') {
-              logo = hboLogo; // Direct use of the imported image module
-          } else if  (subscriptionName.toLowerCase() === 'prime video' || subscriptionName.toLowerCase() === 'amazon prime' 
-          || subscriptionName.toLowerCase() === 'amazon prime video'|| subscriptionName.toLowerCase() === 'amazon'
-          || subscriptionName.toLowerCase() === 'prime') {
-              logo = primeVideoLogo; // Direct use of the imported image module
-          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' 
-          ||subscriptionName.toLowerCase() === 'disney+') {
-              logo = disneyPlusLogo
-          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' ) {
-              logo = disneyPlusLogo
-          } else if (subscriptionName.toLowerCase() === 'netflix' ) {
-            logo = netflixLogo
-          } else if (subscriptionName.toLowerCase() === 'hulu' ) {
-            logo = huluLogo
-          }
           
           if (selectedSubscription) {
             // If there's a selected subscription, it means we are editing
@@ -127,10 +110,27 @@ import {
               paymentDate,
               logo,
             };
-      
             setSubscriptions([...subscriptions, newSubscription]);
           }
-      
+
+          if (subscriptionName.toLowerCase() === 'hbo' || subscriptionName.toLowerCase() === 'max'
+          || subscriptionName.toLowerCase() === 'hbo max') {
+              logo = hboLogo; // Direct use of the imported image module
+          } else if  (subscriptionName.toLowerCase() === 'prime video' || subscriptionName.toLowerCase() === 'amazon prime' 
+          || subscriptionName.toLowerCase() === 'amazon prime video'|| subscriptionName.toLowerCase() === 'amazon'
+          || subscriptionName.toLowerCase() === 'prime') {
+              logo = primeVideoLogo; // Direct use of the imported image module
+          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' 
+          ||subscriptionName.toLowerCase() === 'disney+') {
+              logo = disneyPlusLogo
+          } else if (subscriptionName.toLowerCase() === 'disney' ||subscriptionName.toLowerCase() === 'disney plus' ) {
+              logo = disneyPlusLogo
+          } else if (subscriptionName.toLowerCase() === 'netflix' ) {
+            logo = netflixLogo
+          } else if (subscriptionName.toLowerCase() === 'hulu' ) {
+            logo = huluLogo
+          }
+          
           setSubscriptionName('');
           setCost('');
           setPaymentDate('');
