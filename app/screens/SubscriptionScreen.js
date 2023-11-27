@@ -85,6 +85,10 @@ import {
       };
 
       const handleAddSubscription = () => {
+        if (!subscriptionName.trim() || !cost.trim() || !paymentDate.trim()) {
+          Alert.alert('Error', 'Please fill out all the fields.');
+          return; // Stop the function if any field is empty
+        }
         let logo = null;
         if (subscriptionName.toLowerCase().includes('hbo') || subscriptionName.toLowerCase().includes('max')) {
             logo = hboLogo;

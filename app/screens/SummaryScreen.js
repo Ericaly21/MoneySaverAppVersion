@@ -1,50 +1,52 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Dimensions } from 'react-native';
 
+const screenWidth = Dimensions.get('window').width;
 const SummaryScreen = () => {
   const maxValue = 4000;
   const [data, setData] = useState({
-    subscriptions: 79,
-    bills: 1287,
-    saved: 229,
-    monthlyIncome: 4000,
+    Subscriptions: 115,
+    Bills: 1287,
+    Saved: 1369,
+    MonthlyIncome: 3000,
   });
   const [editMode, setEditMode] = useState(false);
 
-  const getWidth = (value) => (value / maxValue) * 100 + '%';
+  const getWidth = (value) => {
+    const widthPercentage = (value / maxValue) * 100;
+    return `${Math.min(widthPercentage, 100)}%`; // Limit the width to a maximum of 100%
+  };
 
   const handleEditClick = () => {
     setEditMode(!editMode);
   };
 
   const handleMonthlyIncomeChange = (newIncome) => {
-    setData({ ...data, monthlyIncome: newIncome });
+    setData({ ...data, MonthlyIncome: newIncome });
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Monthly Breakdown</Text>
-
       <View style={styles.chartContainer}>
         {Object.keys(data).map((key) => (
           <View key={key} style={styles.barRow}>
+            <Text style={styles.keyLabel}>{`${key}: `}</Text>
             <View
               style={[
                 styles.bar,
-                { width: getWidth(data[key]), backgroundColor: key === 'monthlyIncome' ? '#4caf50' : '#2196f3' },
+                { width: getWidth(data[key]), backgroundColor: key === 'MonthlyIncome' ? '#4caf50' : '#2196f3' },
               ]}
-            >
-              <Text style={styles.barLabel}>{key === 'monthlyIncome' ? `$${data[key]}` : ''}</Text>
-            </View>
-            <Text style={styles.valueLabel}>{key !== 'monthlyIncome' ? `$${data[key]}` : ''}</Text>
+            />
+            <Text style={styles.valueLabel}>{`$${data[key]}`}</Text>
           </View>
         ))}
       </View>
-
       <View style={styles.details}>
         <View style={styles.detailBox}>
           <Text style={styles.detailLabel}>Subscriptions</Text>
-          <Text style={styles.detailValue}>$79</Text>
+          <Text style={styles.detailValue}>$115</Text>
         </View>
         <View style={styles.detailBox}>
           <Text style={styles.detailLabel}>Bills</Text>
@@ -54,20 +56,20 @@ const SummaryScreen = () => {
       <View style={styles.details}>
         <View style={styles.detailBox}>
           <Text style={styles.detailLabel}>Saved</Text>
-          <Text style={styles.detailValue}>$229</Text>
+          <Text style={styles.detailValue}>$1,369</Text>
         </View>
         <View style={styles.detailBox}>
           <Text style={styles.detailLabel}>Monthly Income</Text>
           {editMode ? (
             <TextInput
               style={styles.input}
-              value={data.monthlyIncome.toString()}
+              value={data.MonthlyIncome.toString()}
               onChangeText={(text) => handleMonthlyIncomeChange(text)}
               keyboardType="numeric"
             />
           ) : (
             <>
-              <Text style={styles.detailValue}>${data.monthlyIncome}</Text>
+              <Text style={styles.detailValue}>${data.MonthlyIncome}</Text>
               <TouchableOpacity onPress={handleEditClick} style={styles.editButton}>
                 <Text style={styles.editButtonText}>{editMode ? 'Save' : 'Edit'}</Text>
               </TouchableOpacity>
@@ -95,7 +97,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     height: 200,
     marginTop: 20,
+    paddingHorizontal: 20, 
+    width: '50%',
   },
+  
   barRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -103,7 +108,8 @@ const styles = StyleSheet.create({
   bar: {
     height: 20,
     borderRadius: 10,
-    marginRight: 10,
+    backgroundColor: '#2196f3',
+    marginRight: 5,
   },
   barLabel: {
     color: 'white',
@@ -117,7 +123,7 @@ const styles = StyleSheet.create({
   details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10, // Add spacing between the rows
+    marginTop: 10, 
   },
   detailBox: {
     flex: 1,

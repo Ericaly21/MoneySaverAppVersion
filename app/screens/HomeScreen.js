@@ -27,8 +27,16 @@ const HomeScreen = ({ navigation }) => {
     Alert.prompt(
       'Edit Name',
       'Enter your new name:',
-      [{ text: 'Cancel', style: 'cancel' },
-       { text: 'OK', onPress: (newName) => setName(newName) }],
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'OK', onPress: (newName) => {
+          if (newName.length <= 10) {
+            setName(newName);
+          } else {
+            Alert.alert('Error', 'Name must be 10 characters or less');
+          }
+        }}
+      ],
     );
   };
 

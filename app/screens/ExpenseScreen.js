@@ -79,6 +79,10 @@ const ExpenseScreen = () => {
 
 
   const handleAddExpense = () => {
+    if (!expenseName.trim() || !amount.trim() || !paymentDate.trim()) {
+      Alert.alert('Error', 'Please fill out all the fields.');
+      return; // Stop the function if any field is empty
+    }
     if (selectedExpense) {
       // If there's a selected expense, it means we are editing
       const updatedExpenses = expenses.map(expense => {
